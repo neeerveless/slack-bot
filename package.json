@@ -1,0 +1,19 @@
+{
+  "name": "SlackBot",
+  "version": "0.0.1",
+  "private": true,
+  "author": {
+    "name": "MSHR",
+    "email": "neeerveless@gmail.com"
+  },
+  "scripts": {
+    "start": "supervisor index.js"
+  },
+  "main": "index.js",
+  "engines": {
+    "node": "4.1.1"
+  },
+  "dependencies": {
+    "@slack/client": "^2.2.1"
+  }
+}
