@@ -1,6 +1,9 @@
 var Slack  = require('../modules/Slack');
+var Excite = require('../modules/Excite');
 
 const POST_MESSAGE   = 'post';
+const TRANSLATION_JP = 'ja';
+const TRANSLATION_EN = 'en';
 
 Command = function(config, text) {
   this.config = config;
@@ -8,6 +11,7 @@ Command = function(config, text) {
   this.text   = text;
 
   this.slack  = new Slack(this.config);
+  this.excite = new Excite();
 
   this.isCommand = function() {
     var reg = new RegExp('^'+this.prefix);
@@ -37,7 +41,17 @@ Command = function(config, text) {
       case POST_MESSAGE :
         this.slack.postMessage(this.args);
         break;
+      case TRANSLATION_JP :
+        var result = this.excite.translation_jp(this.args.join(' '), this.callback.bind(this));
+        break;
+      case TRANSLATION_EN :
+        var result = this.excite.translation_en(this.args.join(' '), this.callback.bind(this));
+        break;
     }
+  };
+
+  this.callback = function(result) {
+    this.slack.postMessage([this.config.channel, result]);
   };
 }
 
