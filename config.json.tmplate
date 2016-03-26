@@ -1,3 +1,7 @@
 {
   "token": "input your slack token"
+  "owner": "input your slack user_id",
+  "username": "input contributor username in slack",
+  "icon_url": "input contributor icon_url in slack",
+  "prefix": "input command prefix"
 }
