@@ -1,9 +1,11 @@
 var Slack  = require('../modules/Slack');
 var Excite = require('../modules/Excite');
+var Jmotto = require('../modules/Jmotto');
 
 const POST_MESSAGE   = 'post';
 const TRANSLATION_JP = 'ja';
 const TRANSLATION_EN = 'en';
+const TODAY          = 'today';
 
 Command = function(config, text) {
   this.config = config;
@@ -12,6 +14,7 @@ Command = function(config, text) {
 
   this.slack  = new Slack(this.config);
   this.excite = new Excite();
+  this.jmotto = new Jmotto(this.config);
 
   this.isCommand = function() {
     var reg = new RegExp('^'+this.prefix);
@@ -46,6 +49,10 @@ Command = function(config, text) {
         break;
       case TRANSLATION_EN :
         var result = this.excite.translation_en(this.args.join(' '), this.callback.bind(this));
+        break;
+      case TODAY :
+        this.jmotto.today()
+        .then((this.callback).bind(this));
         break;
     }
   };
