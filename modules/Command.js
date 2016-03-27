@@ -51,8 +51,7 @@ Command = function(config, text) {
         var result = this.excite.translation_en(this.args.join(' '), this.callback.bind(this));
         break;
       case TODAY :
-        this.jmotto.today()
-        .then((this.callback).bind(this));
+        this.jmotto.today(this.callback.bind(this));
         break;
     }
   };

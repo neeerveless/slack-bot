@@ -2,7 +2,6 @@ const LOGIN_URL     = 'https://www1.j-motto.co.jp/fw/dfw/po80/portal/jsp/J10201.
 const TO_URL        = '?https://www1.j-motto.co.jp/fw/dfw/gws/cgi-bin/aspioffice/iocjmtgw.cgi?cmd=login';
 const SCHDAY_URL    = 'https://gws48.j-motto.co.jp/cgi-bin/JM0302814/dneo.cgi?cmd=schindex#cmd=schday';
 const INVALID_LOGIN = 'ログインが無効となりました。再度ログインしてください。';
-const VALID_LOGIN   = '接続中です。しばらくお待ちください・・・';
 
 Jmotto = function(config) {
   this.config = config;
@@ -30,29 +29,28 @@ Jmotto = function(config) {
     }).bind(this));
   };
 
-  this.today = function() {
-    return new Promise((function(resolve, reject) {
-      this.client.fetch(SCHDAY_URL)
-      .then((function (result) {
-        if (result.$('.co-message span').text() === INVALID_LOGIN) {
-          this.login()
-          .then((this.today).bind(this));
-        }else{
-          var reg  = new RegExp('var jsonRestLogin=\n(.*);\n');
-          var json = (reg.exec(result.body)||[])[1]||null;
-          var schedule = this.makeTodaySchedule(json);
-        }
-      }).bind(this));
+  this.today = function(callback) {
+    this.client.fetch(SCHDAY_URL)
+    .then((function (result) {
+      if (result.$('.co-message span').text() === INVALID_LOGIN) {
+        this.login()
+        .then(this.today(callback).bind(this));
+      }else{
+        var reg      = new RegExp('var jsonRestLogin=\n(.*);\n');
+        var json     = (reg.exec(result.body)||[])[1]||null;
+        var schedule = this.makeTodaySchedule(json);
+        callback(schedule);
+      }
     }).bind(this));
   };
 
   this.makeTodaySchedule = function(json) {
     var jsonObj = JSON.parse(json);
-    console.log(jsonObj.slist.item);
     var result = [];
     jsonObj.slist.item.forEach(function(e, i, a){
       var date = new Date();
-      // if (e.startdate !== date.toLocaleDateString().replace(/-/g, '')) return;
+      var is_today_schdule = e.startdate === date.toLocaleDateString().replace(/-/g, '');
+      if (!is_today_schdule) return;
 
       var startTime = e.starttime.replace(/(\d{2})(?=\d{2})/g, "$1:");
       var endTime = e.endtime.replace(/(\d{2})(?=\d{2})/g, " ~ $1:");
