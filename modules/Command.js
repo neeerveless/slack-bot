@@ -17,12 +17,12 @@ Command = function(config, text) {
   this.jmotto = new Jmotto(this.config);
 
   this.isCommand = function() {
-    var reg = new RegExp('^'+this.prefix);
+    var reg = new RegExp(`^${this.prefix}`);
     return reg.test(this.text);
   };
   
   this.fetchCommand = function() {
-    var reg = new RegExp('^'+this.prefix+' +(.*)');
+    var reg = new RegExp(`^${this.prefix} +(.*)`);
     return (reg.exec(this.text)||[])[1]||null;
   };
   
@@ -45,10 +45,10 @@ Command = function(config, text) {
         this.slack.postMessage(this.args);
         break;
       case TRANSLATION_JP :
-        var result = this.excite.translation_jp(this.args.join(' '), this.callback.bind(this));
+        this.excite.translation_jp(this.args.join(' '), this.callback.bind(this));
         break;
       case TRANSLATION_EN :
-        var result = this.excite.translation_en(this.args.join(' '), this.callback.bind(this));
+        this.excite.translation_en(this.args.join(' '), this.callback.bind(this));
         break;
       case TODAY :
         this.jmotto.today(this.callback.bind(this));
